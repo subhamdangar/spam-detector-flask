@@ -44,4 +44,15 @@ The trained model and vectorizer are saved using `pickle` and reused during depl
 
 ## 📂 Project Structure
 
+Spam_Detector_App/
+│
+├── app.py
+├── model.pkl
+├── vectorizer.pkl
+├── requirements.txt
+│
+└── templates/
+└── index.html
+
+
 
