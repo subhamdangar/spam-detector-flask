@@ -44,6 +44,7 @@ The trained model and vectorizer are saved using `pickle` and reused during depl
 
 ## 📂 Project Structure
 
+```
 Spam_Detector_App/
 │
 ├── app.py
@@ -52,7 +53,8 @@ Spam_Detector_App/
 ├── requirements.txt
 │
 └── templates/
-└── index.html
+    └── index.html
+```
 
 
 
