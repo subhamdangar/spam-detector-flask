@@ -3,8 +3,8 @@ from flask import Flask, render_template, request, redirect, url_for, session
 
 import pickle
 import nltk
-nltk.download('punkt')
-nltk.download('stopwords')
+# nltk.download('punkt')
+# nltk.download('stopwords')
 
 import string
 from nltk.corpus import stopwords
