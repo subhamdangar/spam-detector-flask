@@ -3,12 +3,16 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import os
 import pickle
 import nltk
+
 # nltk.download('punkt')
 # nltk.download('stopwords')
 
 import string
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
+
+nltk.data.path.append(os.path.join(os.getcwd(), "nltk_data"))
+
 
 app = Flask(__name__)
 app.secret_key = "spam-detector-secret"
