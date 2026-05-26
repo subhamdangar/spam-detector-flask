@@ -50,7 +50,8 @@ def home():
         message = request.form["message"]
 
         if not message.strip():
-            session.pop("result", None)
+            session.pop("result_type", None)
+            session.pop("confidence", None)
             return redirect(url_for("home"))
 
         processed = transform_text(message)
@@ -60,18 +61,19 @@ def home():
         proba = model.predict_proba(vector)[0]
 
         if prediction == 1:
-            confidence = proba[1] * 100
-            session["result"] = f"SPAM 🚫 (Confidence: {confidence:.2f}%)"
+            session["result_type"] = "spam"
+            session["confidence"] = f"{proba[1] * 100:.2f}"
         else:
-            confidence = proba[0] * 100
-            session["result"] = f"HAM ✅ (Confidence: {confidence:.2f}%)"
+            session["result_type"] = "ham"
+            session["confidence"] = f"{proba[0] * 100:.2f}"
 
         return redirect(url_for("home"))
 
 
     # GET request
-    result = session.pop("result", None)   # 🔥 clears after one display
-    return render_template("index.html", result=result)
+    result_type = session.pop("result_type", None)
+    confidence = session.pop("confidence", None)
+    return render_template("index.html", result_type=result_type, confidence=confidence)
 
 
 

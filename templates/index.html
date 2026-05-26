@@ -536,55 +536,40 @@
             </button>
         </form>
 
-        {% if result %}
-            {% if "SPAM" in result %}
-                {% set confidence_raw = result.split("Confidence: ")[1].replace("%)", "") %}
-                <div class="result-card spam" id="result-card">
-                    <div class="result-status">
+        {% if result_type %}
+            <div class="result-card {{ result_type }}" id="result-card">
+                <div class="result-status">
+                    {% if result_type == 'spam' %}
                         <div class="result-icon">🚫</div>
                         <div>
                             <div class="result-label">Spam Detected</div>
                             <div class="result-description">This message has characteristics typical of spam.</div>
                         </div>
-                    </div>
-                    <div class="confidence-section">
-                        <div class="confidence-header">
-                            <span class="confidence-label">Confidence</span>
-                            <span class="confidence-value">{{ confidence_raw }}%</span>
-                        </div>
-                        <div class="confidence-track">
-                            <div class="confidence-fill" style="width: {{ confidence_raw }}%"></div>
-                        </div>
-                    </div>
-                </div>
-            {% else %}
-                {% set confidence_raw = result.split("Confidence: ")[1].replace("%)", "") %}
-                <div class="result-card ham" id="result-card">
-                    <div class="result-status">
+                    {% else %}
                         <div class="result-icon">✅</div>
                         <div>
                             <div class="result-label">Legitimate Message</div>
                             <div class="result-description">This message appears safe and non-spammy.</div>
                         </div>
+                    {% endif %}
+                </div>
+                <div class="confidence-section">
+                    <div class="confidence-header">
+                        <span class="confidence-label">Confidence</span>
+                        <span class="confidence-value">{{ confidence }}%</span>
                     </div>
-                    <div class="confidence-section">
-                        <div class="confidence-header">
-                            <span class="confidence-label">Confidence</span>
-                            <span class="confidence-value">{{ confidence_raw }}%</span>
-                        </div>
-                        <div class="confidence-track">
-                            <div class="confidence-fill" style="width: {{ confidence_raw }}%"></div>
-                        </div>
+                    <div class="confidence-track">
+                        <div class="confidence-fill" style="width: {{ confidence }}%"></div>
                     </div>
                 </div>
-            {% endif %}
+            </div>
         {% endif %}
 
         <div class="footer">
-            <p class="footer-text">
+            <span class="footer-text">
                 Built with ML & Flask by
                 <a href="https://github.com/subhamdangar" class="footer-link" target="_blank" rel="noopener">Subham Dangar</a>
-            </p>
+            </span>
             <div class="footer-badges">
                 <span class="badge"><span class="badge-dot"></span> Naive Bayes</span>
                 <span class="badge"><span class="badge-dot"></span> TF-IDF</span>
