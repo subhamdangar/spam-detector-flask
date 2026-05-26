@@ -2,115 +2,628 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Spam Detector</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpamShield AI — Intelligent Email Spam Detector</title>
+    <meta name="description" content="Detect spam emails instantly using AI-powered machine learning. Paste any message and get real-time spam vs ham classification with confidence scores.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        body {
+        /* ===== CSS CUSTOM PROPERTIES ===== */
+        :root {
+            --bg-primary: #0a0a1a;
+            --bg-secondary: #12122a;
+            --glass-bg: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-hover: rgba(255, 255, 255, 0.07);
+            --text-primary: #e8e8f0;
+            --text-secondary: #9898b8;
+            --text-muted: #6868a0;
+            --accent-primary: #7c5cfc;
+            --accent-secondary: #5cb8fc;
+            --accent-glow: rgba(124, 92, 252, 0.35);
+            --spam-color: #ff4d6a;
+            --spam-bg: rgba(255, 77, 106, 0.1);
+            --spam-border: rgba(255, 77, 106, 0.25);
+            --ham-color: #00d68f;
+            --ham-bg: rgba(0, 214, 143, 0.1);
+            --ham-border: rgba(0, 214, 143, 0.25);
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+            --transition-smooth: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        html {
+            color-scheme: dark;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+            padding: 24px;
         }
 
-        .container {
-            background: #ffffff;
-            width: 450px;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        /* ===== ANIMATED BACKGROUND ===== */
+        .bg-gradient {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
         }
 
-        h2 {
+        .bg-gradient::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(124, 92, 252, 0.18) 0%, transparent 70%);
+            top: -150px;
+            right: -100px;
+            animation: float-orb 18s ease-in-out infinite;
+        }
+
+        .bg-gradient::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(92, 184, 252, 0.14) 0%, transparent 70%);
+            bottom: -100px;
+            left: -80px;
+            animation: float-orb 22s ease-in-out infinite reverse;
+        }
+
+        @keyframes float-orb {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(60px, 40px) scale(1.1); }
+            50% { transform: translate(-30px, 80px) scale(0.95); }
+            75% { transform: translate(40px, -20px) scale(1.05); }
+        }
+
+        /* ===== FLOATING PARTICLES ===== */
+        .particles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(124, 92, 252, 0.4);
+            border-radius: 50%;
+            animation: particle-rise linear infinite;
+        }
+
+        .particle:nth-child(1) { left: 10%; animation-duration: 14s; animation-delay: 0s; width: 2px; height: 2px; }
+        .particle:nth-child(2) { left: 25%; animation-duration: 18s; animation-delay: 2s; width: 4px; height: 4px; background: rgba(92, 184, 252, 0.3); }
+        .particle:nth-child(3) { left: 40%; animation-duration: 12s; animation-delay: 4s; }
+        .particle:nth-child(4) { left: 55%; animation-duration: 20s; animation-delay: 1s; width: 2px; height: 2px; background: rgba(92, 184, 252, 0.35); }
+        .particle:nth-child(5) { left: 70%; animation-duration: 16s; animation-delay: 3s; width: 4px; height: 4px; }
+        .particle:nth-child(6) { left: 85%; animation-duration: 15s; animation-delay: 5s; width: 2px; height: 2px; background: rgba(92, 184, 252, 0.25); }
+        .particle:nth-child(7) { left: 15%; animation-duration: 22s; animation-delay: 7s; }
+        .particle:nth-child(8) { left: 65%; animation-duration: 13s; animation-delay: 6s; width: 3px; height: 3px; background: rgba(124, 92, 252, 0.25); }
+
+        @keyframes particle-rise {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* ===== MAIN CARD ===== */
+        .card {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 520px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 40px 36px;
+            backdrop-filter: blur(24px) saturate(1.2);
+            -webkit-backdrop-filter: blur(24px) saturate(1.2);
+            box-shadow:
+                0 0 0 1px rgba(255, 255, 255, 0.02),
+                0 24px 80px -12px rgba(0, 0, 0, 0.5),
+                0 0 60px -20px var(--accent-glow);
+            animation: card-enter 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        @keyframes card-enter {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== HEADER ===== */
+        .header {
             text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            margin-bottom: 16px;
+            font-size: 26px;
+            box-shadow: 0 8px 32px -4px var(--accent-glow);
+            animation: logo-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes logo-pulse {
+            0%, 100% { box-shadow: 0 8px 32px -4px var(--accent-glow); }
+            50% { box-shadow: 0 8px 48px -4px rgba(124, 92, 252, 0.5); }
+        }
+
+        .header h1 {
+            font-size: 1.65rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        /* ===== FORM ===== */
+        .form-group {
             margin-bottom: 20px;
-            color: #333;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 10px;
         }
 
         textarea {
             width: 100%;
-            height: 120px;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 14px;
+            height: 140px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            line-height: 1.6;
             resize: none;
             outline: none;
+            transition: border-color var(--transition-smooth), box-shadow var(--transition-smooth), background var(--transition-smooth);
+        }
+
+        textarea::placeholder {
+            color: var(--text-muted);
+            font-weight: 300;
         }
 
         textarea:focus {
-            border-color: #667eea;
+            border-color: rgba(124, 92, 252, 0.5);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 0 3px rgba(124, 92, 252, 0.12), 0 0 20px -5px rgba(124, 92, 252, 0.15);
         }
 
-        button {
+        /* ===== SUBMIT BUTTON ===== */
+        .btn-submit {
             width: 100%;
-            margin-top: 15px;
-            padding: 12px;
-            font-size: 16px;
+            padding: 14px 24px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             border: none;
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            background: #667eea;
-            color: white;
-            transition: background 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
         }
 
-        button:hover {
-            background: #5a67d8;
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
         }
 
-        .result {
-            margin-top: 20px;
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px -6px var(--accent-glow);
         }
 
-        .spam {
-            background: #ffe5e5;
-            color: #c53030;
+        .btn-submit:hover::before {
+            opacity: 1;
         }
 
-        .ham {
-            background: #e6fffa;
-            color: #047857;
+        .btn-submit:active {
+            transform: translateY(0);
         }
 
+        .btn-icon {
+            display: inline-block;
+            margin-right: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-submit:hover .btn-icon {
+            transform: translateX(2px) rotate(15deg);
+        }
+
+        /* ===== RESULT CARD ===== */
+        .result-card {
+            margin-top: 24px;
+            padding: 20px 24px;
+            border-radius: var(--radius-md);
+            animation: result-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(12px);
+        }
+
+        @keyframes result-enter {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-card.spam {
+            background: var(--spam-bg);
+            border: 1px solid var(--spam-border);
+        }
+
+        .result-card.ham {
+            background: var(--ham-bg);
+            border: 1px solid var(--ham-border);
+        }
+
+        .result-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .result-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .spam .result-icon {
+            background: rgba(255, 77, 106, 0.15);
+        }
+
+        .ham .result-icon {
+            background: rgba(0, 214, 143, 0.15);
+        }
+
+        .result-label {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .spam .result-label { color: var(--spam-color); }
+        .ham .result-label { color: var(--ham-color); }
+
+        .result-description {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        /* ===== CONFIDENCE BAR ===== */
+        .confidence-section {
+            margin-top: 4px;
+        }
+
+        .confidence-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .confidence-label {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .confidence-value {
+            font-size: 0.85rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .spam .confidence-value { color: var(--spam-color); }
+        .ham .confidence-value { color: var(--ham-color); }
+
+        .confidence-track {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            border-radius: 3px;
+            animation: fill-bar 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transform-origin: left;
+        }
+
+        .spam .confidence-fill {
+            background: linear-gradient(90deg, var(--spam-color), #ff8fa3);
+        }
+
+        .ham .confidence-fill {
+            background: linear-gradient(90deg, var(--ham-color), #5cf5c0);
+        }
+
+        @keyframes fill-bar {
+            from { transform: scaleX(0); }
+            to { transform: scaleX(1); }
+        }
+
+        /* ===== FOOTER ===== */
         .footer {
-            margin-top: 15px;
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid var(--glass-border);
             text-align: center;
-            font-size: 12px;
-            color: #666;
+        }
+
+        .footer-text {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        .footer-link {
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-smooth);
+        }
+
+        .footer-link:hover {
+            color: var(--accent-secondary);
+        }
+
+        .footer-badges {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            font-size: 0.68rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+
+        .badge-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 560px) {
+            .card {
+                padding: 28px 20px;
+            }
+
+            .header h1 {
+                font-size: 1.35rem;
+            }
+
+            textarea {
+                height: 120px;
+            }
+
+            .footer-badges {
+                gap: 6px;
+            }
+        }
+
+        /* ===== SELECTION COLOR ===== */
+        ::selection {
+            background: rgba(124, 92, 252, 0.3);
+            color: #fff;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>📧 Spam Email Detector</h2>
+    <!-- Animated Background -->
+    <div class="bg-gradient"></div>
 
-    <form method="POST">
-        <textarea name="message" placeholder="Paste your email or message here..." required></textarea>
-        <button type="submit">Check Message</button>
-    </form>
-
-    {% if result %}
-        {% if "SPAM" in result %}
-            <div class="result spam">{{ result }}</div>
-        {% else %}
-            <div class="result ham">{{ result }}</div>
-        {% endif %}
-    {% endif %}
-
-    <div class="footer">
-        ML Project • Flask Web App
+    <!-- Floating Particles -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
     </div>
-</div>
+
+    <!-- Main Card -->
+    <div class="card" id="main-card">
+        <div class="header">
+            <div class="logo" aria-hidden="true">🛡️</div>
+            <h1>SpamShield AI</h1>
+            <p>Paste any email or SMS — our ML model detects spam instantly.</p>
+        </div>
+
+        <form method="POST" id="spam-form">
+            <div class="form-group">
+                <label for="message-input" class="form-label">Message Content</label>
+                <textarea
+                    id="message-input"
+                    name="message"
+                    placeholder="Congratulations! You've won a $1000 gift card. Click here to claim now..."
+                    required
+                ></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submit-btn">
+                <span class="btn-icon">🔍</span>
+                Analyze Message
+            </button>
+        </form>
+
+        {% if result %}
+            {% if "SPAM" in result %}
+                {% set confidence_raw = result.split("Confidence: ")[1].replace("%)", "") %}
+                <div class="result-card spam" id="result-card">
+                    <div class="result-status">
+                        <div class="result-icon">🚫</div>
+                        <div>
+                            <div class="result-label">Spam Detected</div>
+                            <div class="result-description">This message has characteristics typical of spam.</div>
+                        </div>
+                    </div>
+                    <div class="confidence-section">
+                        <div class="confidence-header">
+                            <span class="confidence-label">Confidence</span>
+                            <span class="confidence-value">{{ confidence_raw }}%</span>
+                        </div>
+                        <div class="confidence-track">
+                            <div class="confidence-fill" style="width: {{ confidence_raw }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                {% set confidence_raw = result.split("Confidence: ")[1].replace("%)", "") %}
+                <div class="result-card ham" id="result-card">
+                    <div class="result-status">
+                        <div class="result-icon">✅</div>
+                        <div>
+                            <div class="result-label">Legitimate Message</div>
+                            <div class="result-description">This message appears safe and non-spammy.</div>
+                        </div>
+                    </div>
+                    <div class="confidence-section">
+                        <div class="confidence-header">
+                            <span class="confidence-label">Confidence</span>
+                            <span class="confidence-value">{{ confidence_raw }}%</span>
+                        </div>
+                        <div class="confidence-track">
+                            <div class="confidence-fill" style="width: {{ confidence_raw }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+
+        <div class="footer">
+            <p class="footer-text">
+                Built with ML & Flask by
+                <a href="https://github.com/subhamdangar" class="footer-link" target="_blank" rel="noopener">Subham Dangar</a>
+            </p>
+            <div class="footer-badges">
+                <span class="badge"><span class="badge-dot"></span> Naive Bayes</span>
+                <span class="badge"><span class="badge-dot"></span> TF-IDF</span>
+                <span class="badge"><span class="badge-dot"></span> NLTK</span>
+                <span class="badge"><span class="badge-dot"></span> Flask</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-resize textarea
+        const textarea = document.getElementById('message-input');
+        textarea.addEventListener('input', function () {
+            this.style.height = '140px';
+            this.style.height = Math.min(this.scrollHeight, 280) + 'px';
+        });
+
+        // Subtle parallax on card
+        const card = document.getElementById('main-card');
+        document.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 80;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 80;
+            card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+
+        document.addEventListener('mouseleave', () => {
+            card.style.transform = 'rotateY(0deg) rotateX(0deg)';
+        });
+
+        // Focus animation
+        textarea.addEventListener('focus', () => {
+            card.style.transition = 'transform 0.5s ease, box-shadow 0.5s ease';
+            card.style.boxShadow = '0 0 0 1px rgba(255, 255, 255, 0.02), 0 24px 80px -12px rgba(0, 0, 0, 0.5), 0 0 80px -15px rgba(124, 92, 252, 0.4)';
+        });
+
+        textarea.addEventListener('blur', () => {
+            card.style.boxShadow = '';
+        });
+    </script>
 
 </body>
 </html>
